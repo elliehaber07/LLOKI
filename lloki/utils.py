@@ -1,15 +1,9 @@
-import os
-import copy
 import torch
 import random
 import numpy as np
 import scipy.sparse
-import scanpy as sc
 from sklearn import metrics
 from munkres import Munkres
-import logging
-import sys
-import torch.nn.functional as F
 
 def set_seed(seed=0):
     torch.manual_seed(seed)
@@ -18,16 +12,6 @@ def set_seed(seed=0):
     torch.backends.cudnn.benchmark = False
     random.seed(seed)
     np.random.seed(seed)
-
-def filter_genes_cells(adata):
-    """Remove empty cells and genes."""
-    
-    if "var_names_all" not in adata.uns:
-        # fill in original var names before filtering
-        adata.uns["var_names_all"] = adata.var.index.to_numpy()
-    sc.pp.filter_genes(adata, min_cells=1)
-    sc.pp.filter_cells(adata, min_counts=2)
-
 
 def drop_data(adata, rate, datatype='real'):
     
@@ -56,41 +40,6 @@ def drop_data(adata, rate, datatype='real'):
         adata.obsm["train"] = X
 
     return adata
-
-
-def cosine_similarity(x,y):
-    x = F.normalize(x, dim=1, p=2)
-    y = F.normalize(y, dim=1, p=2)
-    cos_sim = torch.sum(torch.mul(x,y),1)
-    return cos_sim
-
-def cos_sim(x,y):
-    sim = np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y))
-    return sim
-
-def imputation_error(X_hat, X, drop_index):
-    
-    i, j, ix = drop_index['i'], drop_index['j'], drop_index['ix']
-    
-    all_index = i[ix], j[ix]
-    x, y = X_hat[all_index], X[all_index]
-
-    squared_error = (x-y)**2
-    absolute_error = np.abs(x - y)
-
-    rmse = np.mean(np.sqrt(squared_error))
-    median_l1_distance = np.median(absolute_error)
-    cosine_similarity = cos_sim(x,y)
-    
-    return rmse, median_l1_distance, cosine_similarity
-
-
-def reset(value):
-    if hasattr(value, 'reset_parameters'):
-        value.reset_parameters()
-    else:
-        for child in value.children() if hasattr(value, 'children') else []:
-            reset(child)
 
 
 def cluster_acc(y_true, y_pred):
@@ -148,43 +97,34 @@ def cluster_acc(y_true, y_pred):
         return acc, f1_macro, f1_micro
 
 
+def enumerateConfig(args):
+    args_names = []
+    args_vals = []
+    for arg in vars(args):
+        args_names.append(arg)
+        args_vals.append(getattr(args, arg))
 
-def setup_logger(save_dir, text, filename = 'log.txt'):
-    os.makedirs(save_dir, exist_ok=True)
-    logger = logging.getLogger(text)
-    # for each in logger.handlers:
-    #     logger.removeHandler(each)
-    logger.setLevel(4)
-    ch = logging.StreamHandler(stream=sys.stdout)
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(message)s")
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-    if save_dir:
-        fh = logging.FileHandler(os.path.join(save_dir, filename))
-        fh.setLevel(logging.DEBUG)
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-    logger.info("======================================================================================")
+    return args_names, args_vals
 
-    return logger
+def printConfig(args):
+    args_names, args_vals = enumerateConfig(args)
+    st = ''
+    for name, val in zip(args_names, args_vals):
+        if val == False:
+            continue
+        st_ = "{} <- {} / ".format(name, val)
+        st += st_
 
-def set_filename(args):
-    # runs = '_n_runs_10' if args.n_runs == 10 else ''
-    runs = f'n_runs_{args.n_runs}'
-    if args.drop_rate > 0.0:
-        logs_path = f'logs_{runs}/imputation/{args.name}'
-    else:
-        logs_path = f'logs_{runs}/clustering/{args.name}'
+    return st[:-1]
 
-    os.makedirs(logs_path, exist_ok=True)
-    
-    file = f'{logs_path}/scFP.txt'
+def config2string(args):
+    args_names, args_vals = enumerateConfig(args)
+    st = ''
+    for name, val in zip(args_names, args_vals):
+        if val == False:
+            continue
+        if name not in ['device']:
+            st_ = "{}_{}_".format(name, val)
+            st += st_
 
-    return file
-
-def get_gene(x):
-    if 'symbol' in x.keys():
-        return x['symbol']
-    return ''
-
+    return st[:-1]
