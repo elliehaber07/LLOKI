@@ -154,19 +154,4 @@ After running LLOKI, the output directory will contain:
 - **Trained LLOKI-CAE Model (`checkpoints/`)**: Model weights and logs for integration.
 - **Final Integrated Data (`cae_umap.png`)**: UMAP visualization of the integrated spatial transcriptomics data.
 
----
 
-## Citation
-
-If you use LLOKI in your research, please cite:
-
-> **Your Paper or Preprint (if available)**  
-> Authors, *Title*, Year.
-
----
-
-## Contact
-
-For issues, questions, or contributions, please reach out or submit an issue on [GitHub](https://github.com/your-repo).
-
----
