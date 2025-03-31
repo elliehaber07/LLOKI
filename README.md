@@ -132,15 +132,15 @@ LLOKI provides various tunable parameters to adjust the integration process. The
 | `--checkpoint_dir` | Directory for model checkpoints | `checkpoints` |
 | `--k` | Number of neighbors for KNN in LLOKI-FP | `40` |
 | `--iter` | Number of iterations for feature propagation | `40` |
-| `--alpha` | Weighting parameter for propagation | `0.5` |
+| `--alpha` | Weighting parameter for propagation | `0.05` |
 | `--seed` | Random seed for reproducibility | `0` |
 | `--device` | Device to run computations (`cuda` or `cpu`) | `cuda` |
 | `--npl_num_neighbors` | Number of neighbors for neighborhood preservation loss in LLOKI-CAE | `30` |
-| `--lambda_neighborhood` | Weighting factor for neighborhood preservation loss | `250` |
-| `--lambda_triplet` | Weighting factor for triplet loss | `0.2` |
-| `--lr` | Learning rate for training LLOKI-CAE | `0.0005` |
-| `--epochs` | Number of epochs for training LLOKI-CAE | `50` |
-| `--batch_size` | Batch size for training LLOKI-CAE | `4000` |
+| `--lambda_neighborhood` | Weighting factor for neighborhood preservation loss | `500` |
+| `--lambda_triplet` | Weighting factor for triplet loss | `2` |
+| `--lr` | Learning rate for training LLOKI-CAE | `0.005` |
+| `--epochs` | Number of epochs for training LLOKI-CAE | `200` |
+| `--batch_size` | Batch size for training LLOKI-CAE | `16000` |
 | `--batch_dim` | Dimensionality of batch embeddings | `10` |
 | `--num_batches` | Number of spatial technologies integrated | `5` |
 
