@@ -41,7 +41,7 @@ We recommend using **Anaconda** to manage your environment. If you haven't alrea
 Create a Python 3.8 environment using the following command:
 
 ```bash
-conda install --name lloki python=3.8
+conda create --name lloki python=3.8
 ```
 
 Activate the environment:
