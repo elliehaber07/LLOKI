@@ -1,3 +1,5 @@
+Updated repo at: https://github.com/ma-compbio/LLOKI
+
 # Overview of LLOKI
 
 ![LLOKI recovered-5](https://github.com/user-attachments/assets/579abb41-2d58-49ca-928c-487f8deea9cc)
